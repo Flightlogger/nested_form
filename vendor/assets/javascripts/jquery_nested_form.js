@@ -8,13 +8,14 @@
     addFields: function(e) {
       // Setup
       var link      = e.currentTarget;
-      var assoc     = $(link).data('association');                // Name of child
-      var blueprint = $('#' + $(link).data('blueprint-id'));
+      var $link     = $(link);
+      var assoc     = $link.data('association');                  // Name of child
+      var blueprint = $link.parents('form').find('#' + $link.data('blueprint-id'));
       var content   = blueprint.data('blueprint');                // Fields template
 
       // Make the context correct by replacing <parents> with the generated ID
       // of each of the parent objects
-      var context = ($(link).closest('.fields').closestChild('input, textarea, select').eq(0).attr('name') || '').replace(new RegExp('\[[a-z_]+\]$'), '');
+      var context = ($link.closest('.fields').closestChild('input, textarea, select').eq(0).attr('name') || '').replace(new RegExp('\[[a-z_]+\]$'), '');
 
       // context will be something like this for a brand new form:
       // project[tasks_attributes][1255929127459][assignments_attributes][1255929128105]
@@ -63,13 +64,13 @@
     removeFields: function(e) {
       var $link = $(e.currentTarget),
           assoc = $link.data('association'); // Name of child to be removed
-      
+
       var hiddenField = $link.prev('input[type=hidden]');
       hiddenField.val('1');
-      
+
       var field = $link.closest('.fields');
       field.hide();
-      
+
       field
         .trigger({ type: 'nested:fieldRemoved', field: field })
         .trigger({ type: 'nested:fieldRemoved:' + assoc, field: field });
